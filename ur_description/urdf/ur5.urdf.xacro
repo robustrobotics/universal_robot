@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://wiki.ros.org/xacro">
 
+  <xacro:arg name="use_effort_interface" default="$(optenv HUSKY_UR_EFFORT_INTERFACE_ENABLED false)" />
+  
   <xacro:include filename="$(find ur_description)/urdf/ur.transmission.xacro" />
   <xacro:include filename="$(find ur_description)/urdf/ur.gazebo.xacro" />
 
@@ -316,7 +318,12 @@
       </collision>
     </link>
 
-    <xacro:ur_arm_transmission prefix="${prefix}" />
+    <xacro:if value="$(arg use_effort_interface)">
+            <xacro:ur_arm_transmission prefix="${prefix}" joint_interface="EffortJointInterface" />
+    </xacro:if>
+    <xacro:unless value="$(arg use_effort_interface)">
+            <xacro:ur_arm_transmission prefix="${prefix}" joint_interface="PositionJointInterface" />
+    </xacro:unless>
     <xacro:ur_arm_gazebo prefix="${prefix}" />
 
     <!-- ROS base_link to UR 'Base' Coordinates transform -->
